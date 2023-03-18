@@ -1,11 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.active {
-  background-color: gold;
-}
-.pending {
-  background-color: gold;
-  opacity: 0.5;
-}
