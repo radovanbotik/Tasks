@@ -1,39 +1,45 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import RootLayout, { action as createTaskAction } from "./RootLayout";
-import AllTasks, { loader as allTasksLoader } from "./routes/AllTasks";
-import DoneTasks, { loader as doneTasksLoader } from "./routes/DoneTasks";
-import EditTask from "./routes/EditTask";
-import NewTask from "./routes/NewTask";
-import PendingTasks, { loader as pendingTasksLoader } from "./routes/PendingTasks";
+import ErrorPage from "./ErrorPage";
+import RootLayout, { loader as rootLoader, action as rootAction } from "./RootLayout";
+import Delete, { action as deleteAction } from "./routes/Delete";
+import Edit, { loader as editLoader, action as editAction } from "./routes/Edit";
+import IndexView from "./routes/IndexView";
+import Task, { loader as taskLoader, action as taskAction } from "./routes/Task";
 
 const router = createBrowserRouter([
   {
-    path: "/tasks",
+    path: "/",
     element: <RootLayout />,
-    action: createTaskAction,
+    loader: rootLoader,
+    action: rootAction,
+    errorElement: <ErrorPage />,
     children: [
       {
-        path: "all",
-        element: <AllTasks />,
-        loader: allTasksLoader,
-      },
-      {
-        path: "done",
-        element: <DoneTasks />,
-        loader: doneTasksLoader,
-      },
-      {
-        path: "pending",
-        element: <PendingTasks />,
-        loader: pendingTasksLoader,
-      },
-      {
-        path: "newtask",
-        element: <NewTask />,
-      },
-      {
-        path: ":taskId/edit",
-        element: <EditTask />,
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            index: true,
+            element: <IndexView />,
+          },
+          {
+            path: "tasks/:taskId",
+            element: <Task />,
+            loader: taskLoader,
+            action: taskAction,
+          },
+          {
+            path: "tasks/:taskId/edit",
+            element: <Edit />,
+            loader: editLoader,
+            action: editAction,
+          },
+          {
+            path: "tasks/:taskId/delete",
+            action: deleteAction,
+            element: <Delete />,
+            errorElement: <div>error white deleting, try again.</div>,
+          },
+        ],
       },
     ],
   },

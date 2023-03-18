@@ -5,3 +5,7 @@
 .active {
   background-color: gold;
 }
+.pending {
+  background-color: gold;
+  opacity: 0.5;
+}
