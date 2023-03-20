@@ -2,23 +2,31 @@ import React from "react";
 import { useLoaderData, Link, Form, useFetcher } from "react-router-dom";
 import { getTask, updateTask } from "../tasks";
 
-export const loader = async ({ params }) => {
-  const task = await getTask(params.taskId);
-  console.log(task);
+type Task = {
+  dueTo: string;
+  editedOn: string;
+  createdOn: string;
+  id: string;
+  title: string;
+  urgent: string;
+  status: string;
+};
+
+export const loader = async ({ params }: any) => {
+  const task = await getTask({ id: params.taskId });
   return { task };
 };
 
-export const action = async ({ request, params }) => {
+export const action = async ({ request, params }: any) => {
   const formData = await request.formData();
   //convert to boolean
-  const urgentUpdate = { urgent: formData.get("urgent") === "true" ? true : false };
-  return updateTask(urgentUpdate, params.taskId);
+  const urgentUpdate = { urgent: JSON.stringify(formData.get("urgent") === "true" ? true : false) };
+  return updateTask({ task: urgentUpdate, id: params.taskId });
 };
 
 const Task = () => {
-  const { task } = useLoaderData();
+  const { task } = useLoaderData() as { task: Task };
   const { id, title, urgent, createdOn, editedOn, dueTo, status } = task;
-  console.log(urgent);
   return (
     <div className="overflow-x-auto">
       <table className="table w-full">
@@ -100,24 +108,24 @@ const Task = () => {
   );
 };
 
-function Urgent({ task }) {
-  const fetcher = useFetcher();
-  let urgent = task.urgent;
-  if (fetcher.formData) {
-    urgent = fetcher.formData.get("urgent") === "true" ? true : false;
-  }
+// function Urgent({ task }) {
+//   const fetcher = useFetcher();
+//   let urgent = task.urgent;
+//   if (fetcher.formData) {
+//     urgent = fetcher.formData.get("urgent") === "true" ? true : false;
+//   }
 
-  return (
-    <fetcher.Form method="post">
-      <button
-        name="urgent"
-        value={urgent ? "false" : "true"}
-        aria-label={urgent ? "flag as not urgent" : "flag as urgent"}
-      >
-        {urgent === "true" ? "urgent" : "not urgent"}
-      </button>
-    </fetcher.Form>
-  );
-}
+//   return (
+//     <fetcher.Form method="post">
+//       <button
+//         name="urgent"
+//         value={urgent ? "false" : "true"}
+//         aria-label={urgent ? "flag as not urgent" : "flag as urgent"}
+//       >
+//         {urgent === "true" ? "urgent" : "not urgent"}
+//       </button>
+//     </fetcher.Form>
+//   );
+// }
 
 export default Task;

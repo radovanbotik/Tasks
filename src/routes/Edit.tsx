@@ -2,26 +2,35 @@ import React from "react";
 import { Form, useLoaderData, redirect, useNavigate } from "react-router-dom";
 import { getTask, updateTask } from "../tasks";
 import moment from "moment";
+// import Task from "./Task";
 
-export const loader = async ({ params }) => {
-  const task = await getTask(params.taskId);
-  return { task };
+type Task = {
+  dueTo: Date;
+  editedOn: Date;
+  createdOn: Date;
+  id: string;
+  title: string;
+  urgent: string;
+  status: string;
 };
 
-export const action = async ({ request, params }) => {
+export const loader: ({}: any) => Promise<{ task: Task }> = async ({ params }) => {
+  const task = await getTask({ id: params.taskId });
+  return { task };
+};
+export const action = async ({ request, params }: { request: any; params: any }) => {
   const formData = await request.formData();
-  const updates = Object.fromEntries(formData);
-  console.log(formData.get("urgent"));
-  await updateTask(updates, params.taskId);
+  const task: any = Object.fromEntries(formData);
+  await updateTask({ task, id: params.taskId });
   return redirect(`/tasks/${params.taskId}`);
 };
 
 const Edit = () => {
   const navigate = useNavigate();
-  const { task } = useLoaderData();
+  const { task } = useLoaderData() as { task: Task };
   const { title, urgent, createdOn, editedOn, dueTo, status } = task;
 
-  const formatDate = date => {
+  const formatDate = (date: Date) => {
     return moment(date).format("YYYY-MM-D");
   };
 

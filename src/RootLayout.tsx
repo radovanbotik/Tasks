@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Outlet, NavLink, useLoaderData, Form, redirect, useNavigation, useSubmit } from "react-router-dom";
 import { createTask, getTasks } from "./tasks";
 
-export const loader = async ({ request }) => {
+export const loader = async ({ request }: any) => {
   const url = new URL(request.url);
   const q = url.searchParams.get("q");
   let tasks = await getTasks();
@@ -30,7 +30,7 @@ const RootLayout = () => {
   }, [q]);
 
   return (
-    <div className="drawer drawer-mobile">
+    <div className="drawer-mobile drawer">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label>

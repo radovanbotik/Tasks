@@ -2,7 +2,7 @@ import React from "react";
 import { redirect } from "react-router-dom";
 import { deleteTask } from "../tasks";
 
-export const action = async ({ params }) => {
+export const action = async ({ params }: any) => {
   //   throw new Error("error while deleting");
   await deleteTask(params.taskId);
   return redirect("/");

@@ -3,33 +3,36 @@ import axios from "axios";
 const URL = "https://64142c6e7d342ac7c4e4e933.mockapi.io/task";
 
 type Task = {
-  DueTo: Date;
-  EditedOn: Date;
-  CreatedOn: Date;
+  dueTo: Date;
+  editedOn: Date;
+  createdOn: Date;
   id: string;
-  name: string;
-  urgent: boolean;
+  title: string;
+  urgent: string;
+  status: string;
+};
+
+type GetTasksResponse = {
+  data: Task[];
 };
 
 const getTasks = async () => {
-  const resp = await axios({
+  const { data, status } = await axios<GetTasksResponse>({
     method: "get",
     url: URL,
   });
-  const tasks: Task[] = resp.data;
-  return tasks;
+  return data;
 };
 
-const getTask = async taskId => {
-  const resp = await axios({
+const getTask = async ({ id }: { id: string }): Promise<Task> => {
+  const { data } = await axios<Task>({
     method: "get",
-    url: `${URL}/${taskId}`,
+    url: `${URL}/${id}`,
   });
-  const task = resp.data;
-  return task;
+  return data;
 };
 
-const createTask = async () => {
+const createTask = async (): Promise<Task> => {
   let id = Math.random().toString(36).substring(2, 9);
   let task = {
     id,
@@ -44,27 +47,23 @@ const createTask = async () => {
     url: URL,
     data: task,
   });
-  const newTask = resp.data;
-  return newTask;
+  return resp.data;
 };
 
-const updateTask = async (updates, taskId) => {
-  const resp = await axios({
+const updateTask = async ({ task, id }: { task: Pick<Task, "urgent"> | Task; id: string }) => {
+  const { data } = await axios<Task>({
     method: "put",
-    url: `${URL}/${taskId}`,
-    data: updates,
+    url: `${URL}/${id}`,
+    data: task,
   });
-  const updatedTask = resp.data;
-  return updatedTask;
+  return data;
 };
 
-const deleteTask = async taskId => {
-  const resp = await axios({
+const deleteTask = async (taskId: string): Promise<void> => {
+  await axios({
     method: "delete",
     url: `${URL}/${taskId}`,
   });
-  const deletedTask = resp.data;
-  return deletedTask;
 };
 
 export { getTask, getTasks, createTask, updateTask, deleteTask };
